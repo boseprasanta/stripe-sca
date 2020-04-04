@@ -1,0 +1,109 @@
+<html>
+  <head>
+    <title>
+      Checkout
+    </title>
+    <style>
+      /**
+ * The CSS shown here will not be introduced in the Quickstart guide, but shows
+ * how you can use CSS to style your Element's container.
+ */
+      .StripeElement {
+        box-sizing: border-box;
+
+        height: 40px;
+
+        padding: 10px 12px;
+
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+      }
+
+      .StripeElement--focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+      }
+
+      .StripeElement--invalid {
+        border-color: #fa755a;
+      }
+
+      .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <script src = "https://js.stripe.com/v3/"></script>
+      <h4>Either select an old card or use a new one for 3D secured payments</h4>
+      <div>
+          <select id = "select-card">
+            <option value = "">- Select -</option>
+            <option value = "<%=defaultCard.id%>"><%=defaultCard.brand%> <%=defaultCard.last4%> (<%=defaultCard.exp_month%>/<%=defaultCard.exp_year%>) (Default)</option>
+            <% for (var i = 0; i< otherCards.length; i++) { %>
+            <option value = "<%=otherCards[i].id%>"><%=otherCards[i].brand%> <%=otherCards[i].last4%> (<%=otherCards[i].exp_month%>/<%=otherCards[i].exp_year%>)</option>
+            <% } %>
+          </select>
+      </div>
+      <div class="form-row">
+        <label for="card-element">
+          Credit or debit card
+        </label>
+        <div id="card-element">
+          <!-- A Stripe Element will be inserted here. -->
+        </div>
+    
+        <!-- Used to display form errors. -->
+        <div id="card-errors" role="alert"></div>
+      </div>
+    
+      <button id = "card-button" data-secret = "<%=client_secret %>">Submit Payment</button>
+      <p> *As client secret is generated at the time of page rendering. Such workflows will fail </p>
+      <p> Tried a old / new card -> failed -> Other card tried </p>
+      <p> ** Refresh the page which will create a new client_secret, and wotk flow will run normally</p>
+    <script>
+      const stripe = Stripe("<%=publicKey%>") // put your stripe public key here 
+      const elements = stripe.elements()
+      const style = {
+        base: {
+          color: '#32325d',
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+          fontSmoothing: 'antialiased',
+          fontSize: '16px',
+          '::placeholder': {
+            color: '#aab7c4'
+          }
+        },
+        invalid: {
+          color: '#fa755a',
+          iconColor: '#fa755a'
+        }
+      };
+      const card = elements.create("card", {style: style})
+      card.mount('#card-element');
+
+      const cardButton = document.getElementById("card-button")
+      cardButton.addEventListener("click", (event) => {
+        const clientSecret = cardButton.dataset.secret
+        const dropDown = document.getElementById("select-card")
+        const selectedValue = dropDown.options[dropDown.selectedIndex].value;
+        if (selectedValue === "") {
+          // Add new card every time
+          stripe.handleCardPayment(clientSecret, card).then((result) => {
+            console.log("New Card: response", result)
+          })
+        } else {
+          stripe.handleCardPayment(clientSecret, { 
+            payment_method: selectedValue
+          }).then(function(result) {
+              console.log("Used Card: response", result);
+          });
+        }
+      })
+    </script>
+  </body>
+</html>
