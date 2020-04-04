@@ -1,5 +1,6 @@
 const Stripe = require("../lib/stripe")
 module.exports = {
+  // eslint-disable-next-line consistent-return
   async create3dPayment(req, res) {
     try {
       const amount = 1
@@ -24,5 +25,5 @@ module.exports = {
       })
     }
   }
-  
+
 }
