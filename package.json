@@ -11,7 +11,7 @@
     "lint:fix": "eslint './**/*.js' --quiet --fix"
   },
   "dependencies": {
-    "body-parser": "~1.0.0",
+    "body-parser": "~1.20.1",
     "cookie-parser": "~1.0.1",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
@@ -19,7 +19,7 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.1",
-    "express": "~4.0.0",
+    "express": "~4.18.2",
     "jade": "~1.3.0",
     "morgan": "~1.9.1",
     "static-favicon": "~1.0.0",
